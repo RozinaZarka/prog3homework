@@ -50,16 +50,16 @@ public class EventFrame extends JFrame {
 			
 			this.add(new JScrollPane(jt),BorderLayout.CENTER);
 			
-			//hozzáadó sor
-			JPanel adderPanel=new JPanel(new FlowLayout());
-			adderPanel.add(new JLabel("Esemény:"));
-			newName = (JTextField)adderPanel.add(new JTextField(15)); 
 			
-			adderPanel.add(new JLabel("Dátum:"));
-			newDate = (JTextField)adderPanel.add(new JTextField(6));
-			//JButton deleteButton = (JButton) adderPanel.add(new JButton("Töröl"));
+			JPanel mypanel=new JPanel(new FlowLayout());
+			mypanel.add(new JLabel("Esemény:"));
+			newName = (JTextField)mypanel.add(new JTextField(15)); 
 			
-			JButton adderButton = (JButton) adderPanel.add(new JButton("Felvesz"));
+			mypanel.add(new JLabel("Dátum:"));
+			newDate = (JTextField)mypanel.add(new JTextField(20));
+
+			//hozzáadó gomb
+			JButton adderButton = (JButton) mypanel.add(new JButton("Felvesz"));
 			adderButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent ae) 
@@ -73,54 +73,24 @@ public class EventFrame extends JFrame {
 						jt.updateUI();
 					}
 				});
-			this.add(adderPanel,BorderLayout.SOUTH);
-	    }
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	/*		JButton adderButton = (JButton) adderPanel.add(new JButton("Felvesz"));
-			adderButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent ae) 
-					{
-						try {
-							data.addEvent(newName.getText(), newDate.getText());
-						} catch (ParseException e) {
-							//  Auto-generated catch block
-							e.printStackTrace();
-						}
-						jt.updateUI();
-					});
-				
-			this.add(adderPanel,BorderLayout.SOUTH);
-	    }
-	    
-	   JButton deleteButton = (JButton) adderPanel.add(new Jbutton("Töröl"));
-	   deleteButton.addActionListener(new ActionListener () {
-				public void actionPerformed(ActionEvent ae) 
-				{
-				Component component = renderer.getTableCellRendererComponent(
-						table, value, isSelected, hasFocus, row, column);
-				data.removeRow(data.events.get(table.getRowSorter().convertRowIndexToModel(row)));
-					
-					jt.updateUI();
-				});
 			
-		this.add(adderPanel,BorderLayout.SOUTH);
-    }
-    */
+	     jt.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+	    //törlő gomb
+	    JButton deleteButton = (JButton) mypanel.add(new JButton("Töröl"));
+	    deleteButton.addActionListener(new ActionListener() {
+
+	        public void actionPerformed(ActionEvent arg0) { 
+	            data.removeRow(jt.getSelectedRow());
+	            jt.updateUI();
+	        } 
+	    });
+	    
+	    this.add(mypanel,BorderLayout.SOUTH);
+	   }
+	    
+	   
+
 
 	    
 	    @SuppressWarnings("unchecked")
@@ -153,7 +123,7 @@ public class EventFrame extends JFrame {
 				});
 
 	        // Felépítjük az ablakot
-	        setMinimumSize(new Dimension(500, 200));
+	        setMinimumSize(new Dimension(700, 500));
 	        initComponents();
 	    }
 
