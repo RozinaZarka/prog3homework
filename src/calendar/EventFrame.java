@@ -21,11 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.RowSorter;
+//import javax.swing.RowSorter;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
+//import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.util.*;
+
 public class EventFrame extends JFrame {
 	
 		private static final long serialVersionUID = -7514761915166101108L;
@@ -46,16 +47,17 @@ public class EventFrame extends JFrame {
 			//sz√≠nez√©s
 			jt.setDefaultRenderer(String.class, new EventTableCellRenderer(jt.getDefaultRenderer(String.class)));
 			jt.setDefaultRenderer(Date.class, new EventTableCellRenderer(jt.getDefaultRenderer(Date.class)));
+			jt.setDefaultRenderer(Boolean.class, new EventTableCellRenderer(jt.getDefaultRenderer(Boolean.class)));
 			//-------------------------------------------------------------------------------------------------------
 			
 			this.add(new JScrollPane(jt),BorderLayout.CENTER);
 			
 			
 			JPanel mypanel=new JPanel(new FlowLayout());
-			mypanel.add(new JLabel("Esem√©ny:"));
+			mypanel.add(new JLabel("EsemÈny:"));
 			newName = (JTextField)mypanel.add(new JTextField(15)); 
 			
-			mypanel.add(new JLabel("D√°tum:"));
+			mypanel.add(new JLabel("D·tum:"));
 			newDate = (JTextField)mypanel.add(new JTextField(20));
 
 			//hozz√°ad√≥ gomb
@@ -65,7 +67,7 @@ public class EventFrame extends JFrame {
 					public void actionPerformed(ActionEvent ae) 
 					{
 						try {
-							data.addEvent(newName.getText(), newDate.getText());
+							data.addEvent(newName.getText(), newDate.getText(),false);
 						} catch (ParseException e) {
 							//  Auto-generated catch block
 							e.printStackTrace();
@@ -76,8 +78,8 @@ public class EventFrame extends JFrame {
 			
 	     jt.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-	    //t√∂rl≈ë gomb
-	    JButton deleteButton = (JButton) mypanel.add(new JButton("T√∂r√∂l"));
+	    //tˆrlÈs gomb
+	    JButton deleteButton = (JButton) mypanel.add(new JButton("Tˆrˆl"));
 	    deleteButton.addActionListener(new ActionListener() {
 
 	        public void actionPerformed(ActionEvent arg0) { 
@@ -95,10 +97,10 @@ public class EventFrame extends JFrame {
 	    
 	    @SuppressWarnings("unchecked")
 	    public EventFrame() {
-	        super("Napt√°r");
+	        super("Napt·r");
 	        setDefaultCloseOperation(EXIT_ON_CLOSE);
 	        
-	        // Indul√°skor bet√∂ltj√ºk az adatokat
+	        // Indul·skor betˆltj¸k az adatokat
 	        try {
 	            data = new EventData();
 	            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Events.dat"));
@@ -108,7 +110,7 @@ public class EventFrame extends JFrame {
 	            ex.printStackTrace();
 	        }
 	        
-	        // Bez√°r√°skor mentj√ºk az adatokat
+	        // Bez·r·skorskor mentj¸k az adatokat
 	        addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosing(WindowEvent e) {
@@ -153,9 +155,15 @@ public class EventFrame extends JFrame {
 				// meg√°llap√≠tjuk, hogy elm√∫lt-e az esm√©ny vagy nem,
 				if(actualEvent.getDate().before(new Date()))
 					bg=Color.RED;
-				else
-					bg=Color.GREEN;
-				// √©s ez alapj√°n √°t√°ll√≠tjuk a komponens h√°tt√©rsz√≠n√©t:
+				else 
+				{ 
+					if(actualEvent.isUrgent()) {
+						bg = Color.BLUE;
+					} else bg=Color.GREEN;
+				
+				}
+					
+				// ez alapj·n ·lÌtjuk a h·ttÈrszÌnt:
 				component.setBackground(bg);
 				return component;
 			}

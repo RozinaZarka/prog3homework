@@ -5,6 +5,8 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+import calendar.Event;
+
 import java.text.ParseException;
 import java.util.*;
 
@@ -21,16 +23,18 @@ public class EventData extends AbstractTableModel{
 
 	@Override
 	public int getColumnCount() {
-		return 2; //merthogy 2 oszlopunk van
+		return 3; //merthogy 2 oszlopunk van
 	}
 
 	@Override
-	public Object getValueAt(int i1, int i2) {
-		Event event = events.get(i1);
-		if (i2 == 0) return event.getName();
-		else  return event.getDate();
-			
+	public Object getValueAt(int i, int i1) {
+		Event event = events.get(i);
+		switch(i1) {
+			case 0: return event.getName();
+			case 1: return event.getDate();
+			default: return event.isUrgent();
 		}
+	}
 	
 	public void removeRow(int row) {
 		    events.remove(row);
@@ -46,40 +50,51 @@ public class EventData extends AbstractTableModel{
 	@Override
 	public String getColumnName(int i)
 	{
-		if( i == 0) return "NÃ©v";
-		else return "DÃ¡tum";
-		
-		
+		switch(i)
+		{
+			case 0: return "Név";
+			case 1: return "Dátum";
+			default: return "Fontos?";
+		}
 	}
     
 	@Override
 	public Class<?> getColumnClass(int i)
 	{
-		if (i ==1) return Date.class;
-		else return String.class;
-		
+		switch(i)
+		{
+			case 0: return String.class;
+			case 1: return Date.class;
+			default: return Boolean.class;
+			
+		}
+	}
+	
+	@Override
+	public boolean isCellEditable(int i, int i1)
+	{
+		boolean[] b={false,false,true};
+		return (i1<=getColumnCount() && i1>=0)?b[i1]:false;
 	}
 	
 	@Override
 	public void setValueAt(Object o, int i, int i1)
 	{
 		Event s=events.get(i);
-		if(i1==0) s.setName((String)o);
-		else
-			try {
-				s.setDate((String)o);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
+	if(i1>=2)
+	{
+			s.setUrgency((Boolean)o);
+				
+		}
 		events.set(i, s);
 		this.fireTableRowsUpdated(i, i);
+	
 		
 	}
 
-	public void addEvent(String name, String stringDate) throws ParseException
+	public void addEvent(String name, String stringDate,boolean urgency) throws ParseException
 	{
-		events.add(new Event(name, stringDate));
+		events.add(new Event(name, stringDate,urgency));
 		this.fireTableDataChanged();
 	}
 }
