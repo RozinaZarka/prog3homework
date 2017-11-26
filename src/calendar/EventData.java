@@ -18,21 +18,23 @@ public class EventData extends AbstractTableModel{
 
 	@Override
 	public int getRowCount() {
+		if (events == null) return 0;
 		return events.size();
 	}
 
 	@Override
 	public int getColumnCount() {
-		return 3; //merthogy 2 oszlopunk van
+		return 3; //merthogy 3 oszlopunk van
 	}
 
+	
 	@Override
-	public Object getValueAt(int i, int i1) {
-		Event event = events.get(i);
-		switch(i1) {
+	public Object getValueAt(int row, int column) {
+		Event event = events.get(row);
+		switch(column) {
 			case 0: return event.getName();
 			case 1: return event.getDate();
-			default: return event.isUrgent();
+			default: return event.isImportant();
 		}
 	}
 	
@@ -71,10 +73,10 @@ public class EventData extends AbstractTableModel{
 	}
 	
 	@Override
-	public boolean isCellEditable(int i, int i1)
+	public boolean isCellEditable(int row, int column)
 	{
 		boolean[] b={false,false,true};
-		return (i1<=getColumnCount() && i1>=0)?b[i1]:false;
+		return (column<=getColumnCount() && column>0)?b[column]:false;
 	}
 	
 	@Override
@@ -83,7 +85,7 @@ public class EventData extends AbstractTableModel{
 		Event s=events.get(i);
 	if(i1>=2)
 	{
-			s.setUrgency((Boolean)o);
+			s.setImportancy((Boolean)o);
 				
 		}
 		events.set(i, s);
@@ -92,9 +94,9 @@ public class EventData extends AbstractTableModel{
 		
 	}
 
-	public void addEvent(String name, String stringDate,boolean urgency) throws ParseException
+	public void addEvent(String name, String stringDate,boolean importancy) throws ParseException
 	{
-		events.add(new Event(name, stringDate,urgency));
+		events.add(new Event(name, stringDate,importancy));
 		this.fireTableDataChanged();
 	}
 }

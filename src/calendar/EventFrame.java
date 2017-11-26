@@ -26,6 +26,13 @@ import javax.swing.table.TableCellRenderer;
 //import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.util.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 
 public class EventFrame extends JFrame {
 	
@@ -34,66 +41,74 @@ public class EventFrame extends JFrame {
 		private JTextField newName;
 	    private JTextField newDate;
 	    /*
-	     * Itt hozzuk lÃ©tre Ã©s adjuk hozzÃ¡ az ablakunkhoz a kÃ¼lÃ¶nbÃ¶zÃµ komponenseket
-	     * (tÃ¡blÃ¡zat, beviteli mezÃµ, gomb).
+	     * Itt hozzuk létre és adjuk hozzá az ablakunkhoz a különbözõ komponenseket
+	     * (táblázat, beviteli mezõ, gombok).
 	     */
 	    private void initComponents() {
 	        this.setLayout(new BorderLayout());
-			//tÃ¡blÃ¡zat
+			//táblázat
 			JTable jt=new JTable(data);
 			jt.setFillsViewportHeight(rootPaneCheckingEnabled);
 			jt.setRowSorter(new TableRowSorter<EventData>(data));
-			
-			//szÃ­nezÃ©s
+			JMenuBar menubar = new JMenuBar();
+			JMenu modify = new JMenu("Módosítás");
+	        modify.setMnemonic(KeyEvent.VK_F);
+	        // új esemény felvétele
+	      
+	        // megjeleníti alul a jpanelt hogy bevihessük az adatokat
+	        	JPanel mypanel=new JPanel(new FlowLayout());
+				mypanel.add(new JLabel("Esemény:"));
+				newName = (JTextField)mypanel.add(new JTextField(15)); 
+				
+				mypanel.add(new JLabel("Dátum:"));
+				newDate = (JTextField)mypanel.add(new JTextField(20));
+
+				//hozzáadó gomb
+				JButton adderButton = (JButton) mypanel.add(new JButton("Felvesz"));
+				adderButton.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent ae) 
+						{
+							try {
+								data.addEvent(newName.getText(), newDate.getText(),false);
+							} catch (ParseException e) {
+								//  Auto-generated catch block
+								e.printStackTrace();
+							}
+							jt.updateUI();
+						}
+					});
+				this.add(mypanel,BorderLayout.SOUTH);
+	      
+	        
+	        //esemény törlése
+	        JMenuItem delete = new JMenuItem("Törlés");
+	        delete.setMnemonic(KeyEvent.VK_E);
+	        delete.addActionListener((ActionEvent event) -> {
+	        	// törli a kiválasztott sort
+	        	data.removeRow(jt.getSelectedRow());
+	            jt.updateUI();
+	        });
+	        modify.add(delete);
+	    
+
+	        menubar.add(modify);
+
+	        setJMenuBar(menubar);
+			//sziínezés
 			jt.setDefaultRenderer(String.class, new EventTableCellRenderer(jt.getDefaultRenderer(String.class)));
 			jt.setDefaultRenderer(Date.class, new EventTableCellRenderer(jt.getDefaultRenderer(Date.class)));
 			jt.setDefaultRenderer(Boolean.class, new EventTableCellRenderer(jt.getDefaultRenderer(Boolean.class)));
 			//-------------------------------------------------------------------------------------------------------
 			
 			this.add(new JScrollPane(jt),BorderLayout.CENTER);
-			
-			
-			JPanel mypanel=new JPanel(new FlowLayout());
-			mypanel.add(new JLabel("Esemény:"));
-			newName = (JTextField)mypanel.add(new JTextField(15)); 
-			
-			mypanel.add(new JLabel("Dátum:"));
-			newDate = (JTextField)mypanel.add(new JTextField(20));
-
-			//hozzÃ¡adÃ³ gomb
-			JButton adderButton = (JButton) mypanel.add(new JButton("Felvesz"));
-			adderButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent ae) 
-					{
-						try {
-							data.addEvent(newName.getText(), newDate.getText(),false);
-						} catch (ParseException e) {
-							//  Auto-generated catch block
-							e.printStackTrace();
-						}
-						jt.updateUI();
-					}
-				});
-			
+		
 	     jt.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-	    //törlés gomb
-	    JButton deleteButton = (JButton) mypanel.add(new JButton("Töröl"));
-	    deleteButton.addActionListener(new ActionListener() {
-
-	        public void actionPerformed(ActionEvent arg0) { 
-	            data.removeRow(jt.getSelectedRow());
-	            jt.updateUI();
-	        } 
-	    });
-	    
-	    this.add(mypanel,BorderLayout.SOUTH);
-	   }
 	    
 	   
-
-
+	   }
+	    
 	    
 	    @SuppressWarnings("unchecked")
 	    public EventFrame() {
@@ -124,14 +139,14 @@ public class EventFrame extends JFrame {
 					}
 				});
 
-	        // FelÃ©pÃ­tjÃ¼k az ablakot
+	        // Felépítjük az ablakot
 	        setMinimumSize(new Dimension(700, 500));
 	        initComponents();
 	    }
 
 	    
 	    public static void main(String[] args) {
-	        // MegjelenÃ­tjÃ¼k az ablakot
+	        // Megjelelenítjük az ablakot
 	        EventFrame sf = new EventFrame();
 	        sf.setVisible(true);
 	    }
@@ -152,12 +167,13 @@ public class EventFrame extends JFrame {
 							table, value, isSelected, hasFocus, row, column);
 				Event actualEvent = data.events.get(table.getRowSorter().convertRowIndexToModel(row));
 				Color bg;
-				// megÃ¡llapÃ­tjuk, hogy elmÃºlt-e az esmÃ©ny vagy nem,
+				// megállapítjuk, hogy elmúlt-e az esmény vagy nem
 				if(actualEvent.getDate().before(new Date()))
 					bg=Color.RED;
 				else 
 				{ 
-					if(actualEvent.isUrgent()) {
+					//megállapítjuk, hogy fontos-e az esemény vagy sem
+					if(actualEvent.isImportant()) {
 						bg = Color.BLUE;
 					} else bg=Color.GREEN;
 				

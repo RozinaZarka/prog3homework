@@ -8,12 +8,12 @@ public class Event implements Serializable {
 
 	private static final long serialVersionUID = -6770675826251024370L;
 
-	// esem√©ny neve
+	// esemÈny neve
     private String name;
-    // esem√©ny ideje.
+    // esemÈny ideje.
     private Date date;
-    //esmem√©ny priorit√°sa
-    boolean urgent;
+    //esmemÈny priorit·sa
+    boolean important;
     // esem√©ny nev√©nek lek√©rdez√©se. 
     public String getName() {
         return name;
@@ -30,24 +30,24 @@ public class Event implements Serializable {
     public void setDate(String date) throws ParseException {
         this.date = Date(date);
     } 
-    //esem√©ny s√ºrg≈ëss√©g√©nek lek√©rdez√©se
-    public boolean isUrgent() {
-    	return urgent;
+    //esemÈny fontoss·g·nak lekÈrdezÈse
+    public boolean isImportant() {
+    	return important;
     }
-    //esem√©ny s√ºrg≈ëss√©g√©nek be√°ll√≠t√°sa
-    public void setUrgency(boolean urgency) {
-    	this.urgent = urgency;
+    //esemÈny fontoss·g·nak be·llÌt·sa
+    public void setImportancy(boolean importancy) {
+    	this.important = importancy;
     }
-    //string for√°mz√°sa d√°tummm√°
+    //string konvert·l·sa d·tum form·tumba
     public static Date Date(String stringdate) throws ParseException {
         SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm"); 
         return ft.parse(stringdate); 
      }
-    // esem√©ny l√©trehoz√°sa 
-	public Event(String name, String stringDate, boolean urgent) throws ParseException {
+    // esemÈny lÈtrehoz·sa
+	public Event(String name, String stringDate, boolean important) throws ParseException {
         this.name = name;
         this.date = Date(stringDate) ;
-        this.urgent = urgent;
+        this.important = important;
         
     }
     

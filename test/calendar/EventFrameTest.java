@@ -1,10 +1,10 @@
-package CalendarTest;
+package calendar;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EventData {
+public class EventFrameTest {
 
 	@Test
 	public void test() {
